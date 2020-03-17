@@ -1,5 +1,7 @@
 PWr W4 Projekt zespolowy 2020
+
 M.Pietras, J.Grzana
+
 Projekt: wyszukiwanie osób na podstawie portretów pamięciowych
 
 Historia postępów:
