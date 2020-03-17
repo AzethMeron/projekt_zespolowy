@@ -8,6 +8,7 @@ Historia postępów:
 
 17.03.2020
 Dodano programy, które umożliwiają określenie podobieństwa wybranej osoby do osób, które znajdują się już w bazie danych.
+
 Folder images - zamiera bazę danych (dataset) z kilkoma sławnymi aktorami.
 Potrtret pamięciowy (images/nicolas_cage_test/nc1)- zdjęcie Nicolasa Cage'a w kapeluszu i brodzie (w odróżnieniu od obrazów w bazie).
 encodings.py - program tworzący plik z kodowaniem twarzy znajdujących się w bazie danych. Przykład wywołania: python encodings.py -d images/dataset -e encodings/facial_encodings.pkl   
