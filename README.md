@@ -6,7 +6,7 @@ Projekt: wyszukiwanie osób na podstawie portretów pamięciowych
 
 Historia postępów:
 
-17.03.2020
+17.03.2020:
 Dodano programy, które umożliwiają określenie podobieństwa wybranej osoby do osób, które znajdują się już w bazie danych.
 
 Folder images - zamiera bazę danych (dataset) z kilkoma sławnymi aktorami.
