@@ -18,8 +18,6 @@ Potrtret pamięciowy (images/nicolas_cage_test/nc1)- zdjęcie Nicolasa Cage'a w 
 encodings.py - program tworzący plik z kodowaniem twarzy znajdujących się w bazie danych. Przykład wywołania: python encodings.py -d 
 images/dataset -e encodings/facial_encodings.pkl   
 
-calculations.py - program obliczający podobieństwo danej osoby do portretu pamięciowego. Przykład wywołania: python calculations.py -i 
-
-images/nicolas_cage_test/nc1.jpg -e encodings/facial_encodings.pkl   
+calculations.py - program obliczający podobieństwo danej osoby do portretu pamięciowego. Przykład wywołania: python calculations.py -i images/nicolas_cage_test/nc1.jpg -e encodings/facial_encodings.pkl   
 
 Na postawie: https://medium.com/swlh/facial-recognition-a-visual-step-by-step-d679289bab11
