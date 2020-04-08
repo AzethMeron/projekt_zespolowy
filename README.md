@@ -25,5 +25,6 @@ Na postawie: https://medium.com/swlh/facial-recognition-a-visual-step-by-step-d6
 
 08.04.2020: M.Pietras
 
-Sprawdzono bazy danych zdjęć wymienione na stronie https://www.face-rec.org/databases/. Większość z nich jest możliwa do popbrania w postaci archiwum. 
+Sprawdzono bazy danych zdjęć wymienione na stronie https://www.face-rec.org/databases/. Większość z nich jest możliwa do pobrania w postaci archiwum. 
+
 Dodano program data_download.py, który pobiera bazę danych ze zdjęciami po podaniu adresu url i folderu zapisu.
