@@ -1,0 +1,2 @@
+Wczytano zestawow danych: 0
+Bledow formatowania: 0
