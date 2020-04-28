@@ -10,6 +10,10 @@
 #include <string>
 #include <fstream>
 #include <pthread.h>
+#include <numeric>
+#include "/usr/include/python2.7/Python.h"
+// Use 'locate Python.h' to get path
+#include "Python.hpp"
 
 using namespace std;
 
@@ -18,88 +22,104 @@ namespace Rozpoznawanie
 
 /* ********************************************************************************* */
 
-	class Informacje
-	{
-		protected:
-			string imie;
-			string nazwisko;
-			string pesel;
-			string notatki;
-		public:
-			string Imie(void) const { return imie; }
-			string Nazwisko(void) const { return nazwisko; }
-			string Pesel(void) const { return pesel; }
-			string Notatki(void) const { return notatki; }
-			void Wczytaj(istream& wejscie) 
-			{
-				// tymczasowosc
-				wejscie >> imie >> nazwisko >> pesel >> notatki;
-			}
-	};
-
-	ostream& operator << (ostream& wyjscie, const Informacje& info)
-	{
-		wyjscie << info.Imie() << ' ' << info.Nazwisko() << ' ' << info.Pesel() << ' ' << info.Notatki(); 
-		return wyjscie;
-	}
-
-	struct Osoba
-	{
-		vector<string> zdjecia; // tymczasowo, ostatecznie powinien byc wektor kodow zdjec
-		Informacje dane; 
-	};
-
-	ostream& operator << (ostream& wyjscie, const Osoba& ob)
-	{
-		wyjscie << ob.dane << endl;
-		for(unsigned int i = 0; i < ob.zdjecia.size(); ++i)
+struct Osoba
+{
+	public:
+		vector<double> zgodnosc;
+		string katalog;
+		
+		inline double Srednia(void) const
 		{
-			wyjscie << ob.zdjecia[i] << endl;
+			double wynik = 0;
+			for(unsigned int i = 0; i < zgodnosc.size(); ++i)
+			{
+				wynik += zgodnosc[i];
+			}
+			return wynik/(double)zgodnosc.size();
 		}
-		return wyjscie;
-	}
+		
+		inline File Informacje(void) const
+		{
+			return ReadFile("BazaDanych/"+katalog+"/info.txt");
+		}
+};
 
-/* ********************************************************************************* */
+bool PorownajOsoby(const Osoba& l, const Osoba& p)
+{
+	return l.Srednia() < p.Srednia();
+}
 
-	class BazaOsob : public BazaUniwersalna<Osoba>
-	{
-		protected:
-			Osoba WczytajWpis(const string& dirname) const override
+struct Wyniki
+{
+	protected:
+		vector<Osoba> wyniki;
+		int Znajdz(const string& nazwa) const
+		{
+			// Sprawdz ostatni dodany - dosc czesty przypadek
+			if(wyniki.size() > 0) if(wyniki.back().katalog == nazwa) return (wyniki.size()-1);
+			// Glowna petla
+			for(unsigned int i = 0; i < wyniki.size(); ++i)
 			{
-				ifstream plik_dane(dirname+"dane.txt");
-				if(!plik_dane.is_open()) { throw false; }
-				vector<string> listaPlikow = GetFilesInDir(dirname.c_str());
-				RemoveFileFromList(listaPlikow,"dane.txt");
+				if(wyniki[i].katalog == nazwa)
+					return (int)i;
+			}
+			// Jesli nie znaleziono
+			return -1;
+		}
+	public:
+		void Wczytaj(istream& wejscie)
+		{
+			{ string tmp; getline(wejscie,tmp); }
+			while(wejscie.good())
+			{
+				double zgodnosc = -1;
+				string katalog = "placeholder";
 				
-				Osoba output;
-				for(unsigned int i = 0; i < listaPlikow.size(); ++i)
+				string tmp; 
+				getline(wejscie,tmp); 
+				if(!wejscie.good()) break;
+				zgodnosc = stod(tmp); 
+				
+				getline(wejscie,katalog);
+				if(!wejscie.good()) break;
+						
+				int ind = Znajdz(katalog);
+				if(ind == -1)
 				{
-					output.zdjecia.push_back(dirname+listaPlikow[i]);
+					wyniki.emplace_back();
+					wyniki.back().katalog = katalog;
+					wyniki.back().zgodnosc.push_back(zgodnosc);
 				}
-				output.dane.Wczytaj(plik_dane);
-				return output;
+				else
+				{
+					wyniki[ind].zgodnosc.push_back(zgodnosc);
+				}
 			}
-		public:
-			BazaOsob(const string& dir)
+		}
+		vector<Osoba> PobierzListe(const unsigned int& MaxNum)
+		{
+			sort(wyniki.begin(),wyniki.end(),PorownajOsoby);
+			vector<Osoba> wyjscie;
+			for(unsigned int i = 0; i < wyniki.size(); ++i)
 			{
-				ofstream logs ("tmp/logs/Baza.txt");
-				WczytajBaze(dir);
-				WypiszLogi(logs);
+				if(i < MaxNum)
+				{
+					wyjscie.push_back(wyniki[i]);
+				}
 			}
-			void WczytajBaze(const string& dirname) override;
-	};
+			return wyjscie;
+		}
+};
 
-/* ********************************************************************************* */
-
-	pthread_mutex_t baza_globalna_mutex;
-	BazaOsob baza_globalna("BazaDanych/");
-
-	void BazaOsob::WczytajBaze(const string& dirname)
+void PakujWyniki(sf::Packet& pak, vector<Osoba> lista)
+{
+	pak << (uint32_t)lista.size();
+	for(unsigned int i = 0; i < lista.size(); ++i)
 	{
-		pthread_mutex_lock(&baza_globalna_mutex);
-		BazaUniwersalna::WczytajBaze(dirname);
-		pthread_mutex_unlock(&baza_globalna_mutex);
+		pak << (double_t)lista[i].Srednia();
+		WriteFileToPacket(pak,lista[i].Informacje());
 	}
+}
 
 /* ********************************************************************************* */
 
@@ -110,22 +130,46 @@ namespace Rozpoznawanie
 		gniazdo.receive(pak);
 		File portret = ReadFileFromPacket(pak);
 		string sciezka_portretu;
-		{ char temp[50]; sprintf(temp,"tmp/img/%ld",port); string sciezka_portretu = temp; portret.Save(sciezka_portretu); }
+		{ char temp[50]; sprintf(temp,"tmp/img/%ld",port); sciezka_portretu = temp; portret.Save(sciezka_portretu); }
 		
 		// Tymczasowe zrywanie polaczenia
 		gniazdo.disconnect();
 		
-		// Pobieranie bazy zdjec 
-		pthread_mutex_lock(&baza_globalna_mutex);
-		const BazaOsob baza_lokalna = baza_globalna;
-		pthread_mutex_unlock(&baza_globalna_mutex);
-		
 		// Praca algorytmu - lista najlepszej zgodności
+		string sciezka_wyniku;
+		{ char temp[50]; sprintf(temp,"tmp/wynik/%ld",port); sciezka_wyniku = temp; }
+		// Tutaj wywolanie calculations, zapis do sciezka_wyniku (plik)
+		
+		logs << "Koniec pracy algorytmu" << endl;
+		
+		// Wczytywanie wynikow
+		Wyniki wyniki;
+		ifstream plik_z_wynikami(sciezka_wyniku);
+		wyniki.Wczytaj(plik_z_wynikami);
+		
+		logs << "Zakonczono wczytywanie wynikow" << endl;
+		
+		// Pakowanie wynikow
+		vector<Osoba> lista = wyniki.PobierzListe(2);
+		logs << "Liczba elementow listy: " << lista.size() << endl;
+		sf::Packet paczka_z_wynikami;
+		PakujWyniki(paczka_z_wynikami,lista);
+		
+		logs << "Zakonczono pakowanie" << endl;
 		
 		// Ponowne polaczenie
 		sluchacz.accept(gniazdo);
 		
 		// Wysylanie wynikow
+		gniazdo.send(paczka_z_wynikami);
+	}
+	
+	void Setup(void)
+	{
+		vector<string> tmp;
+		tmp.push_back("BazaDanych");
+		tmp.push_back("tmp/encodings/facial_encodings.pkl");
+		CallScript("encodings","create_encodings",tmp);
 	}
 }
 

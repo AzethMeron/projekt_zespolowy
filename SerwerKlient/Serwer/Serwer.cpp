@@ -6,6 +6,8 @@
 #include <fstream>
 #include <chrono>
 #include <thread>
+#include "/usr/include/python2.7/Python.h"
+// Use 'locate Python.h' to get path
 #include "BazaUniwersalna.hpp"
 #include "RozpoznawanieTwarzy.hpp"
 
@@ -38,11 +40,10 @@ using namespace std;
 // - Zczytanie danych przekazanych przez menadzera w postaci void* (done)
 // - Nawiazanie polaczenia z klientem na przydzielonym porcie (done)
 // - Test polaczenia (done)
-// - (praktycznie done): Pobieranie zdjecia (portretu pamieciowego) od klienta 
-// - TO DO: Obliczenie kodu otrzymanego zdjecia
-// - (done) Wczytanie listy osob oraz powiazanych z nim informacji (imie, nazwisko, adnotacja, zakodowane dane na podstawie zdjec)
-// - TO DO: Porownanie kodu zdjecia z elementami listy, umieszczenie informacji o osobach w kolejce priorytetowej (sortowanie po % zgodności)
-// - TO DO: Wyslanie informacji o 10 najbardziej zgodnych osobach do klienta
+// - Pobieranie zdjecia (portretu pamieciowego) od klienta (done)
+// - TO DO: Wywolanie encodings (setup) oraz calculations w Pythonie
+// - Wczytanie wynikow calculations, analiza (done)
+// - Wyslanie informacji o 10 najbardziej zgodnych osobach do klienta (done)
 // - Zwalnianie zasobow po zakonczeniu dzialania (done)
 
 // Napotkane problemy:
@@ -60,6 +61,11 @@ using namespace std;
 void Program(sf::TcpListener& sluchacz, long port, sf::TcpSocket& gniazdo, ostream& logs)
 {
 	Rozpoznawanie::Program(sluchacz,port,gniazdo,logs);
+}
+
+void Setup(void)
+{
+	Rozpoznawanie::Setup();
 }
 
 void delay(const int& ms)
@@ -170,8 +176,14 @@ void *Serwer(void* tmp)
 /* *********************************************************************************** */
 
 
-int main()
+int main(int argc, char* argv[])
 {
+	Py_SetProgramName(argv[0]);  /* optional but recommended */
+	Py_Initialize();
+	
+	// Setup dla aplikacji
+	Setup();
+	
 	// Adres IP
 	cout << endl << "Pobieranie adresu IP..." << endl;
 	sf::IpAddress IP = sf::IpAddress::getPublicAddress();
@@ -240,6 +252,7 @@ int main()
 		gniazdo.disconnect();
 	}
 	sluchacz.close();
+	Py_Finalize();
 	pthread_exit(NULL);
 }
 

@@ -3,6 +3,8 @@ import argparse
 import pickle
 import cv2
 import face_recognition
+import sys
+import numpy as np
 
 def get_encoding_for_image(imagePath):
 
@@ -27,6 +29,8 @@ if __name__ == '__main__':
                     help="sciezka do obrazu, z ktorym porownywane beda zdjecia z bazy dancyh")
     ap.add_argument("-e", "--encodings-file", required=True,
                     help="sciezka do pliku z kodowaniem twarzy")
+    ap.add_argument("-f", "--file-name", required=True,
+                    help="sciezka do pliku z wynikami obliczen")
     args = vars(ap.parse_args())
 
     new_encoded_image = get_encoding_for_image(args['new_image'])
@@ -36,11 +40,16 @@ if __name__ == '__main__':
 
     encodings = results['encodings']
     names = results['names']
+    names_uniq, names_nr=np.unique(names,return_counts=True)
     
     # obliczanie odleglosci - czyli podobienstwa twarzy i wypisywanie ich
     distance_results = face_distance(encodings, new_encoded_image)
     results = list(zip(distance_results, names))
     sorted_list = sorted(results, key=lambda x: x[0])
+    f = open(args['file_name'],'w')
+    f.write(str(len(names_nr))+'\n')
     for x in sorted_list:
-        print(x)
+        f.write(str(x[0])+'\n')
+        f.write(str(x[1])+'\n')
+    f.close()
 
