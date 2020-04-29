@@ -28,3 +28,13 @@ Na postawie: https://medium.com/swlh/facial-recognition-a-visual-step-by-step-d6
 Sprawdzono bazy danych zdjęć wymienione na stronie https://www.face-rec.org/databases/. Większość z nich jest możliwa do pobrania w postaci archiwum. 
 
 Dodano program data_download.py, który pobiera bazę danych ze zdjęciami po podaniu adresu url i folderu zapisu.
+
+29.05.2020: J.Grzana
+
+Trzecia rewizja programu Klient-Serwer, napisanych z użyciem SFMLa oraz wątków Pthread. 
+
+Aplikacja kliencka jest przenośna, wymaga SFMLa który jest jednak dostępny na większość platform. Umożliwia wybór IP serwera z którym się łączy, oraz pliku graficznego do przesłania. Nawiązuje połączenie na określonych w kodzie portach, przesyła plik, odbiera odpowiedź i wyświetla ją na ekranie. 
+
+Aplikacja serwera nasłuchuje na porcie PORT_CON (obecnie 32000) i po nawiązaniu łączności przydziela klientowi wątek i port. Klient łaczy się z podanym portem, gdzie zostaje "obsłużony". W tej chwili działa wszystko (łącznie z przesyłem danych, przetestowane) oprócz wywołania skryptów Pythonowych, umożliwiających rozpoznawanie twarzy. Zalążek tej części jest, ale niedokończony.
+
+Katalog BazaDanych zawiera foldery z informacjami o osobach w postaci zdjęć oraz pliku info.txt. 3 pierwsze linijki tego pliku powinny zawierać: imie, nazwisko, pesel. Dalsza czesc to inne notatki. Nie ma limitów długości, wymagane jest kodowanie ASCII. 
