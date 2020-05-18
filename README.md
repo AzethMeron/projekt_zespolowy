@@ -29,7 +29,7 @@ Sprawdzono bazy danych zdjęć wymienione na stronie https://www.face-rec.org/da
 
 Dodano program data_download.py, który pobiera bazę danych ze zdjęciami po podaniu adresu url i folderu zapisu.
 
-29.05.2020: J.Grzana
+29.04.2020: J.Grzana
 
 Trzecia rewizja programu Klient-Serwer, napisanych z użyciem SFMLa oraz wątków Pthread. 
 
@@ -38,3 +38,8 @@ Aplikacja kliencka jest przenośna, wymaga SFMLa który jest jednak dostępny na
 Aplikacja serwera nasłuchuje na porcie PORT_CON (obecnie 32000) i po nawiązaniu łączności przydziela klientowi wątek i port. Klient łaczy się z podanym portem, gdzie zostaje "obsłużony". W tej chwili działa wszystko (łącznie z przesyłem danych, przetestowane) oprócz wywołania skryptów Pythonowych, umożliwiających rozpoznawanie twarzy. Zalążek tej części jest, ale niedokończony.
 
 Katalog BazaDanych zawiera foldery z informacjami o osobach w postaci zdjęć oraz pliku info.txt. 3 pierwsze linijki tego pliku powinny zawierać: imie, nazwisko, pesel. Dalsza czesc to inne notatki. Nie ma limitów długości, wymagane jest kodowanie ASCII. 
+
+18.05.2020: J. Grzana
+
+Czwarta rewizja programu Klient-Serwer
+Funkcja CallScript działa, ale tylko raz. Przy drugim wywołaniu powoduje błąd Pythona. 
