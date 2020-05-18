@@ -3,7 +3,6 @@ import argparse
 import pickle
 import cv2
 import face_recognition
-import sys
 import numpy as np
 
 def get_encoding_for_image(imagePath):
@@ -52,4 +51,5 @@ if __name__ == '__main__':
         f.write(str(x[0])+'\n')
         f.write(str(x[1])+'\n')
     f.close()
+
 

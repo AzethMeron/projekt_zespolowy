@@ -6,8 +6,6 @@
 #include <fstream>
 #include <chrono>
 #include <thread>
-#include "/usr/include/python2.7/Python.h"
-// Use 'locate Python.h' to get path
 #include "BazaUniwersalna.hpp"
 #include "RozpoznawanieTwarzy.hpp"
 
@@ -21,7 +19,7 @@ using namespace std;
 
 // Flagi do budowania -lsfml-network -lsfml-system -pthread
 // Wymaga C++11 lub nowszy. 
-// Wymaga linuksa do pracy?
+// Wymaga linuksa do pracy
 // Wymaga: libsfml-dev
 
 // Wielowatkowosc dziala, przetestowane
@@ -177,10 +175,7 @@ void *Serwer(void* tmp)
 
 
 int main(int argc, char* argv[])
-{
-	Py_SetProgramName(argv[0]);  /* optional but recommended */
-	Py_Initialize();
-	
+{	
 	// Setup dla aplikacji
 	Setup();
 	
@@ -252,7 +247,6 @@ int main(int argc, char* argv[])
 		gniazdo.disconnect();
 	}
 	sluchacz.close();
-	Py_Finalize();
 	pthread_exit(NULL);
 }
 

@@ -2,6 +2,7 @@
 #define ROZPOZNAWANIE_TWARZY
 
 #include <iostream>
+#include <cstdio>
 #include <SFML/Network.hpp>
 #include "Dir.hpp"
 #include "File.hpp"
@@ -11,8 +12,6 @@
 #include <fstream>
 #include <pthread.h>
 #include <numeric>
-#include "/usr/include/python2.7/Python.h"
-// Use 'locate Python.h' to get path
 #include "Python.hpp"
 
 using namespace std;
@@ -123,6 +122,28 @@ void PakujWyniki(sf::Packet& pak, vector<Osoba> lista)
 
 /* ********************************************************************************* */
 
+	void Calc(const string& portret, const string& plik_wynikowy)
+	{
+		vector<string> tmp;
+		tmp.push_back("-i");
+		tmp.push_back(portret);
+		tmp.push_back("-e");
+		tmp.push_back("tmp/facial_encodings.pkl");
+		tmp.push_back("-f");
+		tmp.push_back(plik_wynikowy);
+		CallScript("Python/calculations.py",tmp);
+	}
+	
+	void Setup(void)
+	{
+		vector<string> tmp;
+		tmp.push_back("-d");
+		tmp.push_back("BazaDanych");
+		tmp.push_back("-e");
+		tmp.push_back("tmp/facial_encodings.pkl");
+		CallScript("Python/encodings.py",tmp);
+	}
+
 	void Program(sf::TcpListener& sluchacz, long port, sf::TcpSocket& gniazdo, ostream& logs)
 	{
 		// Pobieranie zdjecia od klienta
@@ -138,14 +159,21 @@ void PakujWyniki(sf::Packet& pak, vector<Osoba> lista)
 		// Praca algorytmu - lista najlepszej zgodności
 		string sciezka_wyniku;
 		{ char temp[50]; sprintf(temp,"tmp/wynik/%ld",port); sciezka_wyniku = temp; }
+		remove(sciezka_wyniku.c_str());
+		Calc(sciezka_portretu,sciezka_wyniku);
 		// Tutaj wywolanie calculations, zapis do sciezka_wyniku (plik)
 		
 		logs << "Koniec pracy algorytmu" << endl;
 		
 		// Wczytywanie wynikow
 		Wyniki wyniki;
-		ifstream plik_z_wynikami(sciezka_wyniku);
+		ifstream plik_z_wynikami;
+		while(!plik_z_wynikami.is_open())
+		{
+			plik_z_wynikami.open((sciezka_wyniku));
+		}
 		wyniki.Wczytaj(plik_z_wynikami);
+		plik_z_wynikami.close();
 		
 		logs << "Zakonczono wczytywanie wynikow" << endl;
 		
@@ -162,14 +190,6 @@ void PakujWyniki(sf::Packet& pak, vector<Osoba> lista)
 		
 		// Wysylanie wynikow
 		gniazdo.send(paczka_z_wynikami);
-	}
-	
-	void Setup(void)
-	{
-		vector<string> tmp;
-		tmp.push_back("BazaDanych");
-		tmp.push_back("tmp/encodings/facial_encodings.pkl");
-		CallScript("encodings","create_encodings",tmp);
 	}
 }
 

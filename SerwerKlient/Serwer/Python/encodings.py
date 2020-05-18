@@ -42,7 +42,7 @@ def create_encodings(dataset, encodings_file):
     # uzupelnianie juz istniejacego zbioru o nowe dane
     if os.path.exists(encodings_file):
         with open(encodings_file, mode="rb") as opened_file:
-            results = pickle.load(opened_file)
+            results = pickle.load(opened_file,encoding='latin1')
             data['encodings'].extend(results['encodings'])
             data['names'].extend(results['names'])
 
@@ -60,3 +60,5 @@ if __name__ == '__main__':
     args = vars(ap.parse_args())
 
     create_encodings(args['dataset'], args['encodings_file'])
+
+
