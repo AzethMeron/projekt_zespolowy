@@ -50,6 +50,9 @@ using namespace std;
 // - Teoretycznie po dlugim czasie dzialania program mogl sie wysypac przez przepelnienie wektora watkow.
 //   Usunalem wektor, watki sa tworzone jako detached.
 // - Slaby punkt: w przypadku problemu z rozpoczeciem nasluchu na porcie X, wszystkie nastepne porty pozostana wykorzystane a program nie bedzie mogl nawiazywac nowych polaczen
+// - Obrazki PNG nie działają
+//   Dopisano do dokumentacji że działają tylko grafiki .jpg :)
+// - Coś jest nie-tak z funkcja CallScript. Wyglada jakby srodowisko/interpreter Python nie byl resetowany.
 
 // API dla aplikacji uruchamianej na serwerze.
 // - sluchacz jest juz uruchomiony, nie trzeba uruchamiac nasluchiwania
