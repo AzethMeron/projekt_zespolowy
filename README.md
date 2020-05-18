@@ -41,5 +41,5 @@ Katalog BazaDanych zawiera foldery z informacjami o osobach w postaci zdjęć or
 
 18.05.2020: J. Grzana
 
-Czwarta rewizja programu Klient-Serwer
+Czwarta rewizja programu Klient-Serwer.
 Funkcja CallScript działa, ale tylko raz. Przy drugim wywołaniu powoduje błąd Pythona. 
