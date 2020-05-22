@@ -1,23 +1,27 @@
 #ifndef PYTHON_HPP
 #define PYTHON_HPP
 
-// Use 'locate Python.h' to get path
-#include "/usr/include/python3.6m/Python.h"
+#include <boost/python.hpp>
 
 #include <stdio.h>
 #include <vector>
 #include <string>
+#include <pthread.h>
+
+pthread_mutex_t python_mutex;
 
 class CPy
 {
 	public:
 		CPy()
 		{
+			pthread_mutex_lock(&python_mutex);
 			Py_Initialize();
 		}
 		~CPy()
 		{
 			Py_Finalize();
+			pthread_mutex_unlock(&python_mutex);
 		}
 };
 
