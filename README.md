@@ -43,3 +43,7 @@ Katalog BazaDanych zawiera foldery z informacjami o osobach w postaci zdjęć or
 
 Czwarta rewizja programu Klient-Serwer.
 Funkcja CallScript działa, ale tylko raz. Przy drugim wywołaniu powoduje błąd Pythona. 
+
+22.05.2020: J. Grzana
+
+Próbowałem dodać interpreter Pythona do pliku wykonywalnego, ale szybko się okazało że to nie jest rozwiązanie problemu. Mało jest w internecie informacji dotyczących występującego u nas błędu. Ponadto, okazało się że Python w C++ nie jest przystosowany do wielowątkowosci więc program straciłby jedną ze swoich wielkich zalet - obsługę wielu klientóœ jednocześnie. Doszedłem do wniosku, że wykorzystanie wątków Pthread było błędem - należało użyć modelu procesów. Jak widać tutaj: https://stackoverflow.com/questions/2968317/multiple-independent-embedded-python-interpreters-on-multiple-operating-system-t ludzie bardziej doświadczeni z zagnieżdżaniem Pythona również sugerują procesy. Na tym etapie wprowadzenie tej zmiany byłoby jednak zbyt pracochłonne.
