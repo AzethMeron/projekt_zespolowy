@@ -4,6 +4,8 @@ M.Pietras, J.Grzana
 
 Projekt: wyszukiwanie osób na podstawie portretów pamięciowych
 
+Ostateczne wersje programów znajdują się w katalogu SerwerKlient
+
 
 Historia postępów:
 
