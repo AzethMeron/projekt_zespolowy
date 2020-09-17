@@ -7,6 +7,7 @@ import argparse
 from pathlib import Path
 
 
+
 def create_encodings(dataset, encodings_file):
 
     print('PWr W4 Projekt zespolowy 2020 \n M.Pietras, J.Grzana \n Program tworzacy plik z kodowaniem twarzy \n Na podstawie programow P.Ryana')

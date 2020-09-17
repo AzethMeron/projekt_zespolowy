@@ -1,7 +1,7 @@
 #ifndef PYTHON_HPP
 #define PYTHON_HPP
 
-#include <boost/python.hpp>
+//#include <boost/python.hpp>
 
 #include <stdio.h>
 #include <vector>
