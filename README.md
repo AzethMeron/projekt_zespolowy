@@ -1,3 +1,5 @@
+# Polish project. I consider this one a failure, tho I learned good lesson from it.
+
 PWr W4 Projekt zespolowy 2020
 
 M.Pietras, J.Grzana
